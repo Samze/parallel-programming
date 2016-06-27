@@ -27,12 +27,17 @@ func EstimatePiConcurrently(iter, routines int) float64 {
 	hitsChan := make(chan int)
 
 	iterPerRoutine := iter / routines
+	iterLastRoutine := iterPerRoutine + (iter % routines)
 
-	for i := 0; i < routines; i++ {
+	for i := 0; i < routines-1; i++ {
 		go func() {
 			hitsChan <- McCount(iterPerRoutine)
 		}()
 	}
+
+	go func() {
+		hitsChan <- McCount(iterLastRoutine)
+	}()
 
 	hits := 0
 	for i := 0; i < routines; i++ {
