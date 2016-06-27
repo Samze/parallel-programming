@@ -25,19 +25,14 @@ func McCount(iter int) int {
 
 func produceHits(iter, routines int) chan int {
 	hitsChan := make(chan int)
+	routinesArray := SpreadEvenly(iter, routines)
 
-	iterPerRoutine := iter / routines
-	iterLastRoutine := iterPerRoutine + (iter % routines)
-
-	for i := 0; i < routines-1; i++ {
+	for i := 0; i < routines; i++ {
+		iterationsForRoutine := routinesArray[i]
 		go func() {
-			hitsChan <- McCount(iterPerRoutine)
+			hitsChan <- McCount(iterationsForRoutine)
 		}()
 	}
-
-	go func() {
-		hitsChan <- McCount(iterLastRoutine)
-	}()
 
 	return hitsChan
 }
@@ -60,6 +55,7 @@ func EstimatePiSequentially(iter int) float64 {
 func main() {
 	concurrency := 4
 	iterations := 1 << 25
+
 	piSeq := EstimatePiSequentially(iterations)
 	piPar := EstimatePiConcurrently(iterations, concurrency)
 	fmt.Println(fmt.Sprintf("sequentially %f", piSeq))
