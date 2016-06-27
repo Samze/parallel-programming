@@ -47,8 +47,10 @@ func EstimatePiSequentially(iter int) float64 {
 }
 
 func main() {
-	// piSeq := EstimatePiSequentially(1 << 25)
-	piPar := EstimatePiConcurrently(1<<25, 10000)
-	// fmt.Println(fmt.Sprintf("seq %f", piSeq))
+	concurrency := 4
+	iterations := 1 << 25
+	piSeq := EstimatePiSequentially(iterations)
+	piPar := EstimatePiConcurrently(iterations, concurrency)
+	fmt.Println(fmt.Sprintf("seq %f", piSeq))
 	fmt.Println(fmt.Sprintf("par %f", piPar))
 }
