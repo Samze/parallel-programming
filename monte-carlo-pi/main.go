@@ -23,7 +23,7 @@ func McCount(iter int) int {
 	return hits
 }
 
-func EstimatePiConcurrently(iter, routines int) float64 {
+func produceHits(iter, routines int) chan int {
 	hitsChan := make(chan int)
 
 	iterPerRoutine := iter / routines
@@ -38,6 +38,12 @@ func EstimatePiConcurrently(iter, routines int) float64 {
 	go func() {
 		hitsChan <- McCount(iterLastRoutine)
 	}()
+
+	return hitsChan
+}
+
+func EstimatePiConcurrently(iter, routines int) float64 {
+	hitsChan := produceHits(iter, routines)
 
 	hits := 0
 	for i := 0; i < routines; i++ {
@@ -56,6 +62,6 @@ func main() {
 	iterations := 1 << 25
 	piSeq := EstimatePiSequentially(iterations)
 	piPar := EstimatePiConcurrently(iterations, concurrency)
-	fmt.Println(fmt.Sprintf("seq %f", piSeq))
-	fmt.Println(fmt.Sprintf("par %f", piPar))
+	fmt.Println(fmt.Sprintf("sequentially %f", piSeq))
+	fmt.Println(fmt.Sprintf("parallel %f", piPar))
 }
