@@ -23,7 +23,7 @@ func McCount(iter int) int {
 	return hits
 }
 
-func produceHits(iter, routines int) chan int {
+func produceHits(iter, routines int) <-chan int {
 	hitsChan := make(chan int)
 	routinesArray := SpreadEvenly(iter, routines)
 
