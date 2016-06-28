@@ -56,8 +56,18 @@ func main() {
 	concurrency := 4
 	iterations := 1 << 25
 
-	piSeq := EstimatePiSequentially(iterations)
-	piPar := EstimatePiConcurrently(iterations, concurrency)
-	fmt.Println(fmt.Sprintf("sequentially %f", piSeq))
-	fmt.Println(fmt.Sprintf("parallel %f", piPar))
+	sequential := func() interface{} {
+		return EstimatePiSequentially(iterations)
+	}
+
+	parallel := func() interface{} {
+		return EstimatePiConcurrently(iterations, concurrency)
+	}
+
+	seqDuration, seqResult := TimeCall(sequential)
+	parDuration, parResult := TimeCall(parallel)
+
+	fmt.Println(fmt.Sprintf("sequential result: %f executed in %v", seqResult, seqDuration))
+	fmt.Println(fmt.Sprintf("parallel result: %f executed in %v", parResult, parDuration))
+
 }
