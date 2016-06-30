@@ -1,4 +1,4 @@
-package main
+package parallelgo 
 
 func SpreadEvenly(items, routines int) []int {
 	itemsPerRoutine := items / routines

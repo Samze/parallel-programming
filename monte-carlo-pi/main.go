@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+	. "github.com/samze/parallelgo"
 )
 
 func McCount(iter int) int {
