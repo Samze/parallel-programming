@@ -6,7 +6,7 @@ import (
 )
 
 type HorizontalParallelBlur struct {
-	Blur
+	Config
 	routines int
 }
 

@@ -9,12 +9,12 @@ type BlurFilter interface {
 	BlurImage(*image.RGBA) *image.RGBA
 }
 
-type Blur struct {
+type Config struct {
 	radius int
 }
 
 type SequentialBlur struct {
-	Blur
+	Config
 }
 
 func (s *SequentialBlur) BlurImage(img *image.RGBA) *image.RGBA {

@@ -46,13 +46,14 @@ func main() {
 
 	imgRGBA := convertToRGBAImage(&img)
 
+	config := Config{blurRadius}
 	seq := func() interface{} {
-		blur := &SequentialBlur{Blur{3}}
+		blur := &SequentialBlur{config}
 		return blur.BlurImage(imgRGBA)
 	}
 
 	par := func() interface{} {
-		blur := &HorizontalParallelBlur{Blur{3}, 100}
+		blur := &HorizontalParallelBlur{config, 100}
 		return blur.BlurImage(imgRGBA)
 	}
 
