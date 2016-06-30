@@ -6,24 +6,29 @@ import (
 )
 
 type BlurFilter interface {
-	Blur(image.Image) image.Image
+	BlurImage(*image.RGBA) *image.RGBA
 }
 
-type SimpleBlur struct {
+type Blur struct {
 	radius int
 }
 
-func (s *SimpleBlur) Blur(img image.RGBA) image.RGBA {
+type SequentialBlur struct {
+	Blur
+}
+
+func (s *SequentialBlur) BlurImage(img *image.RGBA) *image.RGBA {
 	rect := img.Bounds()
 
 	newImg := image.NewRGBA(image.Rect(0, 0, rect.Dx(), rect.Dy()))
 
 	for x := rect.Min.X; x <= rect.Max.X; x++ {
 		for y := rect.Min.Y; y <= rect.Max.Y; y++ {
-			s.blurAt(&img, newImg, x, y)
+			color := calcNewRGBA(img, x, y, s.radius)
+			newImg.SetRGBA(x, y, color)
 		}
 	}
-	return *newImg
+	return newImg
 }
 
 func clamp(value, min, max int) int {
@@ -36,11 +41,11 @@ func clamp(value, min, max int) int {
 	}
 }
 
-func (s *SimpleBlur) blurAt(img *image.RGBA, newImage *image.RGBA, x, y int) {
-	minX := clamp(x-s.radius, 0, img.Rect.Max.X)
-	maxX := clamp(x+s.radius, 0, img.Rect.Max.X)
-	minY := clamp(y-s.radius, 0, img.Rect.Max.Y)
-	maxY := clamp(y+s.radius, 0, img.Rect.Max.Y)
+func calcNewRGBA(img *image.RGBA, x, y, radius int) color.RGBA {
+	minX := clamp(x-radius, 0, img.Rect.Max.X)
+	maxX := clamp(x+radius, 0, img.Rect.Max.X)
+	minY := clamp(y-radius, 0, img.Rect.Max.Y)
+	maxY := clamp(y+radius, 0, img.Rect.Max.Y)
 
 	var totalR, totalG, totalB, totalA uint32
 	for i := minX; i <= maxX; i++ {
@@ -61,5 +66,5 @@ func (s *SimpleBlur) blurAt(img *image.RGBA, newImage *image.RGBA, x, y int) {
 	newB := totalB / surroundingCellCount
 	newA := totalA / surroundingCellCount
 
-	(*newImage).SetRGBA(x, y, color.RGBA{uint8(newR), uint8(newG), uint8(newB), uint8(newA)})
+	return color.RGBA{uint8(newR), uint8(newG), uint8(newB), uint8(newA)}
 }
