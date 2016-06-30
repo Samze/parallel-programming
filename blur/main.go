@@ -7,6 +7,7 @@ import (
 	"image/draw"
 	"image/png"
 	"os"
+	"strconv"
 )
 
 func check(err error) {
@@ -39,14 +40,23 @@ func convertToRGBAImage(img *image.Image) *image.RGBA {
 }
 
 func main() {
-	arg := os.Args[1]
+	if len(os.Args) != 3 {
+		fmt.Println("Requires two arguments. Image path and blur radius")
+		os.Exit(1)
+	}
 
-	img, err := loadPng(arg)
+	imgPath := os.Args[1]
+	blurRadius, err := strconv.Atoi(os.Args[2])
+
+	check(err)
+
+	img, err := loadPng(imgPath)
 	check(err)
 
 	imgRGBA := convertToRGBAImage(&img)
 
 	config := Config{blurRadius}
+
 	seq := func() interface{} {
 		blur := &SequentialBlur{config}
 		return blur.BlurImage(imgRGBA)
